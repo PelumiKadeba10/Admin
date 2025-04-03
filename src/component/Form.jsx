@@ -6,12 +6,24 @@ function Form() {
     showServiceDetails,
     handleChange,
     removeImage,
+    clearAllImages,
     handleAddServices,
     clearServices,
     handleServiceDetailsChange,
     handleSubmit,
     handleLogout
   } = useData();
+
+  const handleAddDetailsClick = () => {
+    // handleAddServices();
+    // showServiceDetails(true); // This will process services and add details
+  };
+
+  // Create a function to clear the service details
+  const handleClearServicesClick = (e) => {
+    e.preventDefault(); // Prevents accidental form submission
+    clearServices(); // This will reset the services details
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -25,8 +37,14 @@ function Form() {
             Log Out
           </button>
         </div>
-        <p className='text-xl pb-9'>Ensure to confirm content update with the pop-up before Submitting</p>
-
+        <ol className='mb-10 px-4 py-3 bg-red-100 rounded-xl'>
+          <p className='text-lg pb-2 px-4 pt-3 font-bold'> Please Note:</p>
+          <p className='text-lg pb-1 px-4'> - Ensure to confirm content update with the pop-up before submitting.</p>
+          <p className='text-lg pb-1 px-4'>- Wait for the Success Pop-up to ensure file uploads </p>
+          <p className='text-lg pb-1 px-4'>- Image files must be less than 1MB for optimal performance </p>
+          <p className='text-lg pb-2 px-4'>- Upload time largely depends on Internet Speed and number of files uploaded</p>
+        </ol>
+        
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6">
           {/* heading */}
           <div>
@@ -44,6 +62,7 @@ function Form() {
               required
             />
           </div>
+
           {/* Project Title */}
           <div>
             <label htmlFor="projectTitle" className="block text-sm font-medium text-slate-700 mb-1">
@@ -95,7 +114,7 @@ function Form() {
           {/* Services */}
           <div>
             <label htmlFor="services" className="block text-sm font-medium text-slate-700 mb-1">
-              Services (comma separated)
+              Services (Input each as comma separated)
             </label>
             <div className="flex flex-col space-y-2">
               <input
@@ -116,9 +135,10 @@ function Form() {
                 >
                   Add Details
                 </button>
+
                 <button
                   type="button"
-                  onClick={clearServices}
+                  onClick={handleClearServicesClick}
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
                   Clear
@@ -136,7 +156,7 @@ function Form() {
               {formData.serviceDetails.map((detail, index) => (
                 <div key={index} className="space-y-2">
                   <label className="block text-sm font-medium text-slate-700">
-                    {formData.services.split(', ')[index]}
+                  {Array.isArray(formData.services) ? formData.services[index] : formData.services.split(',')[index]}
                   </label>
                   <textarea
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -149,51 +169,73 @@ function Form() {
             </div>
           )}
 
-          {/* Project Image */}
+          {/* Project Images */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Project Image
+            <label htmlFor="projectImages" className="block text-sm font-medium text-slate-700 mb-2">
+              Project Images
             </label>
             <div className="relative">
               <input
                 type="file"
-                id="projectImage"
-                name="projectImage"
+                id="projectImages"
+                name="projectImages"
                 accept="image/*"
                 onChange={handleChange}
                 className="hidden"
-                multiple={false}
+                multiple
               />
               <label
-                htmlFor="projectImage"
+                htmlFor="projectImages"
                 className="w-full px-4 py-2 border-2 border-dashed border-slate-300 rounded-lg text-center cursor-pointer hover:border-blue-500 transition-colors"
               >
-                <span className="block text-sm text-slate-600">Choose Image, Only an image is allowed</span>
-                <span className="block text-xs text-slate-500 mt-1">PNG, JPG, or other image formats</span>
+                <span className="block text-sm text-slate-600">Choose Images</span>
+                <span className="block text-xs text-slate-500 mt-1">Only PNG, JPG, JPEG, GIF, WEBP files allowed</span>
               </label>
               <div className="absolute right-3 top-3">
                 <button
                   type="button"
-                  onClick={() => document.getElementById('projectImage').click()}
+                  onClick={() => document.getElementById('projectImages').click()}
                   className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                 >
-                  Upload
+                  Add Files
                 </button>
               </div>
-              {formData.projectImage && (
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-slate-600">{formData.projectImage.name}</span>
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="text-red-600 hover:text-red-700 transition-colors"
-                  >
-                    Remove
-                  </button>
+              {formData.projectImages.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-slate-700">
+                      {formData.projectImages.length} file(s) selected
+                    </span>
+                    <button
+                      type="button"
+                      onClick={clearAllImages}
+                      className="text-sm text-red-600 hover:text-red-700 transition-colors"
+                    >
+                      Clear All
+                    </button>
+                  </div>
+                  <div className="max-h-40 overflow-y-auto">
+                    {formData.projectImages.map((file, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 bg-slate-100 rounded-md">
+                        <span className="text-sm text-slate-600 truncate max-w-xs">
+                          {file.name}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="text-red-600 hover:text-red-700 transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"

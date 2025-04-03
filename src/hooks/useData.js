@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from "../context/AuthContext";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // Configure axios instance
 const api = axios.create({
@@ -9,8 +10,9 @@ const api = axios.create({
 });
 
 export const useData = () => {
-  const { verifyAuth } = useAuth();
-  const { logout } = useAuth();
+  const { verifyAuth, logout } = useAuth();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     heading: '',
     projectTitle: '',
@@ -18,41 +20,65 @@ export const useData = () => {
     location: '',
     services: '',
     serviceDetails: [],
-    projectImage: null,
+    projectImages: [],
   });
   const [showServiceDetails, setShowServiceDetails] = useState(false);
 
   const handleChange = useCallback((e) => {
     const { name, value, type, files } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'file' ? files[0] : value,
-    }));
+
+    if (type === 'file' && name === 'projectImages') {
+      // Convert FileList to array and combine with existing files
+      const newFiles = Array.from(files).filter(file => 
+        !formData.projectImages.some(img => img.name === file.name) // Prevent duplicate images
+      );
+      setFormData(prev => ({
+        ...prev,
+        projectImages: [...prev.projectImages, ...newFiles],
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  }, [formData.projectImages]);
+
+  const removeImage = useCallback((index) => {
+    setFormData(prev => {
+      const updatedImages = [...prev.projectImages];
+      updatedImages.splice(index, 1);
+      return { ...prev, projectImages: updatedImages };
+    });
   }, []);
 
-  const removeImage = useCallback(() => {
-    setFormData(prev => ({ ...prev, projectImage: null }));
+  const clearAllImages = useCallback(() => {
+    setFormData(prev => ({ ...prev, projectImages: [] }));
   }, []);
 
   const handleAddServices = useCallback(() => {
-    const services = formData.services
+
+    const servicesString = typeof formData.services === 'string' 
+    ? formData.services 
+    : '';
+    const servicesArray = servicesString
       .split(',')
       .map(s => s.trim())
       .filter(s => s !== '');
     
-    if (services.length > 0) {
-      const newServiceDetails = services.map((_, index) => 
-        index < formData.serviceDetails.length ? formData.serviceDetails[index] : ''
-      );
-      
+    if (servicesArray.length > 0) { 
+      const newServiceDetails = servicesArray.map(() => '');
+  
       setFormData(prev => ({
         ...prev,
-        services: services.join(', '),
+        services: [...servicesArray],
         serviceDetails: newServiceDetails,
       }));
       setShowServiceDetails(true);
+      console.log('Service details visible:', true);
     }
-  }, [formData.services, formData.serviceDetails]);
+  }, [formData.services]);
+  
 
   const clearServices = useCallback(() => {
     setShowServiceDetails(false);
@@ -77,23 +103,28 @@ export const useData = () => {
       navigate('/login');
       return;
     }
+    
     const confirmSubmission = window.confirm("Are you sure you want to add this project?");
     if (!confirmSubmission) {
       return;
     }
+
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('heading', formData.heading);
       formDataToSend.append('projectTitle', formData.projectTitle);
       formDataToSend.append('year', formData.year);
       formDataToSend.append('location', formData.location);
-      formDataToSend.append('services', formData.services);
+      const servicesArray = Array.isArray(formData.services) ? formData.services : formData.services.split(',').map(s => s.trim());
+      servicesArray.forEach(service => {
+        formDataToSend.append('services', service);
+      });
       formData.serviceDetails.forEach(detail => {
         formDataToSend.append('serviceDetails', detail);
       });
-      if (formData.projectImage instanceof File) {
-        formDataToSend.append('projectImage', formData.projectImage);
-      }
+      formData.projectImages.forEach((image, index) => {
+        formDataToSend.append(`projectImages`, image); // Note: backend should expect multiple files with same field name
+      });
 
       const token = document.cookie.split('; ')
         .find(row => row.startsWith('auth_token='))
@@ -102,22 +133,26 @@ export const useData = () => {
       await api.post('/api/add_project', formDataToSend, {
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
         },
         withCredentials: true
       });
 
       // Reset form after successful submission
       setFormData({
+        heading: '',
         projectTitle: '',
         year: '',
         location: '',
         services: '',
         serviceDetails: [],
-        projectImage: null,
+        projectImages: [],
       });
       setShowServiceDetails(false);
-      
-      alert('Project added successfully!');
+      setTimeout(() => {
+        alert('Project added successfully!');
+      }, 100);
+
     } catch (error) {
       console.error('Submission error:', error);
       alert('Failed to add project. Please try again.');
@@ -138,6 +173,7 @@ export const useData = () => {
     showServiceDetails,
     handleChange,
     removeImage,
+    clearAllImages,
     handleAddServices,
     clearServices,
     handleServiceDetailsChange,
