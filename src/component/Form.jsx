@@ -114,7 +114,7 @@ function Form() {
           {/* Services */}
           <div>
             <label htmlFor="services" className="block text-sm font-medium text-slate-700 mb-1">
-              Services (Input each as comma separated)
+              Services (Input each as semi-colon separated)
             </label>
             <div className="flex flex-col space-y-2">
               <input
@@ -123,7 +123,7 @@ function Form() {
                 name="services"
                 value={formData.services}
                 onChange={handleChange}
-                placeholder="Enter services separated by commas"
+                placeholder="Enter services separated by semicolons"
                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               />

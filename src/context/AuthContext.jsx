@@ -9,7 +9,7 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
+    baseURL: import.meta.env.VITE_API_BASE_URL || 'https://project-updater.onrender.com',
     withCredentials: true, //COOKIES
     headers: {
       'Content-Type': 'application/json',

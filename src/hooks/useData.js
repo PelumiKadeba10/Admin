@@ -62,7 +62,7 @@ export const useData = () => {
     ? formData.services 
     : '';
     const servicesArray = servicesString
-      .split(',')
+      .split(';')
       .map(s => s.trim())
       .filter(s => s !== '');
     
