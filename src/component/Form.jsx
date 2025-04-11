@@ -1,6 +1,7 @@
 import { useData } from '../hooks/useData'; 
 
 function Form() {
+  
   const {
     formData,
     showServiceDetails,
@@ -11,13 +12,10 @@ function Form() {
     clearServices,
     handleServiceDetailsChange,
     handleSubmit,
-    handleLogout
+    handleLogout,
+    loading
   } = useData();
 
-  const handleAddDetailsClick = () => {
-    // handleAddServices();
-    // showServiceDetails(true); // This will process services and add details
-  };
 
   // Create a function to clear the service details
   const handleClearServicesClick = (e) => {
@@ -237,11 +235,36 @@ function Form() {
           </div>
 
           {/* Submit Button */}
-          <button
+           <button
             type="submit"
-            className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            disabled={loading}
+            className={`w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2 mb-4  rounded transition ${
+              loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:text-black'
+            }`}
           >
-            Add Project
+            {loading && (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                ></path>
+              </svg>
+            )}
+            {loading ? 'Adding Project...Please Wait' : 'Add Project'}
           </button>
         </form>
       </div>

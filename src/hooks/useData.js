@@ -12,6 +12,7 @@ const api = axios.create({
 export const useData = () => {
   const { verifyAuth, logout } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     heading: '',
@@ -97,6 +98,8 @@ export const useData = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     const isAuthenticated = await verifyAuth();
     if (!isAuthenticated) {
       alert('Session expired. Please login again.');
@@ -108,7 +111,7 @@ export const useData = () => {
     if (!confirmSubmission) {
       return;
     }
-
+    
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('heading', formData.heading);
@@ -152,10 +155,11 @@ export const useData = () => {
       setTimeout(() => {
         alert('Project added successfully!');
       }, 100);
+      setLoading(false);
 
     } catch (error) {
-      console.error('Submission error:', error);
       alert('Failed to add project. Please try again.');
+      setLoading(false);
     }
   };
 
@@ -163,7 +167,6 @@ export const useData = () => {
     try {
       await logout();
     } catch (error) {
-      console.error('Logout failed:', error);
       alert('Logout failed. Please try again.');
     }
   };
@@ -178,6 +181,7 @@ export const useData = () => {
     clearServices,
     handleServiceDetailsChange,
     handleSubmit,
-    handleLogout
+    handleLogout,
+    loading
   };
 };
