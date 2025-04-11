@@ -30,7 +30,7 @@ export default function LoginPage() {
     setLoading(true);
     const success = await login(credential);
     if (!success) {
-      setError('Invalid Password');
+      setError('Invalid Password, Try again');
       setLoading(false); // ✅ Fix: Ensure error message is set
       return;
     }
