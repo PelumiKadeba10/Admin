@@ -56,13 +56,14 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit}>
           <div className="mb-1 relative">
             <input
-              type={showPassword ? "text" : "password"}
+            type={showPassword ? "text" : "password"}
             value={credential}
             onChange={(e) => setCredential(e.target.value)}
             className="w-full py-2 pr-10 mb-10 border-b-2 border-black focus:outline-none focus:border-blue-500"
             placeholder="Enter Password"
             required
             />
+
             <span
             onClick={() => setShowPassword(!showPassword)}
             className="absolute left-69 top-1/4 transform -translate-y-1/2 mr-2 cursor-pointer text-gray-500 hover:text-blue-500"
@@ -119,7 +120,7 @@ export default function LoginPage() {
           <button
             className="w-full bg-red-500 text-white py-2 mb-10 px-4 rounded hover:bg-white hover:text-red-500 transition"
           >
-            Go Back Home
+            Go Home
           </button>
           </a>
       </div>
