@@ -7,7 +7,9 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL || 'https://project-updater.onrender.com',
     withCredentials: true, //COOKIES
@@ -16,22 +18,21 @@ export function AuthProvider({ children }) {
     },
   });
 
-
   const login = async (credential) => {
     try {
       const response = await api.post('/api/login', { credential }, {
         headers: { 'Accept': 'application/json' },
         withCredentials: true
       });
-  
+      
       if (response.status === 200) {
         setIsAuthenticated(true);
         navigate('/');
-        return true;  // ✅ Fix: Ensure true is returned
+        return true;  
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        return false;  // ✅ Fix: Ensure false is returned
+        return false;  
       }
       throw error;
     }

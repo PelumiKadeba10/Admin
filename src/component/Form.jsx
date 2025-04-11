@@ -38,11 +38,11 @@ function Form() {
           </button>
         </div>
         <ol className='mb-10 px-4 py-3 bg-red-50 rounded-xl'>
-          <p className='text-lg pb-2 px-4 pt-3 font-bold'> Please Note:</p>
-          <p className='text-lg pb-1 px-4'> - Ensure to confirm content update with the pop-up before submitting.</p>
-          <p className='text-lg pb-1 px-4'>- Wait for the Success Pop-up to ensure file uploads </p>
-          <p className='text-lg pb-1 px-4'>- Image files must be less than 1MB for optimal performance </p>
-          <p className='text-lg pb-2 px-4'>- Upload time largely depends on Internet Speed and number of files uploaded</p>
+          <p className='text-sm pb-2 px-4 pt-3 font-bold'> Please Note:</p>
+          <p className='text-sm pb-1 px-4'> - Ensure to confirm content update with the pop-up before submitting.</p>
+          <p className='text-sm pb-1 px-4'>- Wait for the Success Pop-up to ensure file uploads </p>
+          <p className='text-sm pb-1 px-4'>- Image files must be less than 1MB for optimal performance </p>
+          <p className='text-sm pb-2 px-4'>- Upload time largely depends on Internet Speed and number of files uploaded</p>
         </ol>
         
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6">
