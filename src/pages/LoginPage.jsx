@@ -7,6 +7,7 @@ import Footer from '../component/Footer';
 export default function LoginPage() {
   const [text, setText] = useState('');
   const fullText = "Welcome Admin !";
+  const [loading, setLoading] = useState(false);
   const [credential, setCredential] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
@@ -26,9 +27,11 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const success = await login(credential);
     if (!success) {
-      setError('Invalid Password'); // ✅ Fix: Ensure error message is set
+      setError('Invalid Password');
+      setLoading(false); // ✅ Fix: Ensure error message is set
       return;
     }
     navigate('/'); // ✅ Only navigate if login is successful
@@ -41,7 +44,7 @@ export default function LoginPage() {
     <Nav></Nav>
     <div className="min-h-screen grid md:flex items-center justify-center bg-slate-50">
       <div className="bg-white p-8 rounded-xl shadow-md w-90 pt-16">
-      <p className='text-center text-3xl font-bold pb-5'>
+      <p className='text-center text-3xl font-bold pb-2'>
         {text.split('Admin').map((part, i) => (
           <span key={i}>
             {part}
@@ -49,17 +52,14 @@ export default function LoginPage() {
           </span>
         ))}
       </p>
-      <div className='text-justify text-sm mb-6 p-3 bg-red-50 rounded-lg'>
-      <p>Please note there might be some delay in the login process. 
-        <p className='pt-2'>Wait for the pop-up to show to confirm successful login,<span> Thanks</span></p></p>     
-      </div>
+      <p className='text-2xl pb-6 font-bold text-center'>Login</p>
       <form onSubmit={handleSubmit}>
           <div className="mb-1 relative">
             <input
               type={showPassword ? "text" : "password"}
             value={credential}
             onChange={(e) => setCredential(e.target.value)}
-            className="w-full py-2 pr-10 mb-10 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
+            className="w-full py-2 pr-10 mb-10 border-b-2 border-black focus:outline-none focus:border-blue-500"
             placeholder="Enter Password"
             required
             />
@@ -84,18 +84,44 @@ export default function LoginPage() {
           {error && <p className="text-red-500 mb-2 text-sm">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 mb-10 px-4 rounded hover:bg-white hover:text-black transition"
+            disabled={loading}
+            className={`w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2 mb-4  rounded transition ${
+              loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:text-black'
+            }`}
           >
-            Log In
+            {loading && (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                ></path>
+              </svg>
+            )}
+            {loading ? 'Logging In...' : 'Log In'}
           </button>
+
         </form>
-        {/* <a href='https://www.infinitefocus.ie/'>
+        <a href='https://www.infinitefocus.ie/'>
           <button
             className="w-full bg-red-500 text-white py-2 mb-10 px-4 rounded hover:bg-white hover:text-red-500 transition"
           >
             Go Back Home
           </button>
-          </a> */}
+          </a>
       </div>
     </div>
     <Footer></Footer>
