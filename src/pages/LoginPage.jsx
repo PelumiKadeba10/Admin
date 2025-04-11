@@ -60,7 +60,7 @@ export default function LoginPage() {
             type={showPassword ? "text" : "password"}
             value={credential}
             onChange={(e) => setCredential(e.target.value)}
-            className="w-full py-2 pr-10 mb-10 border-b-2 border-black focus:outline-none focus:border-blue-500"
+            className="w-full py-2 pr-10 mb-3 border-b-2 border-black focus:outline-none focus:border-blue-500"
             placeholder="Enter Password"
             required
             />
