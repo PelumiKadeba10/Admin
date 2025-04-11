@@ -34,6 +34,7 @@ export default function LoginPage() {
       setLoading(false); // ✅ Fix: Ensure error message is set
       return;
     }
+    setLoading(false);
     navigate('/'); // ✅ Only navigate if login is successful
     alert("Login successful !");
   };
@@ -112,7 +113,7 @@ export default function LoginPage() {
                 ></path>
               </svg>
             )}
-            {loading ? 'Logging In...' : 'Log In'}
+            {loading ? 'Logging In...Please Wait' : 'Log In'}
           </button>
 
         </form>
